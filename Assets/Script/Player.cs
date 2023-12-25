@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public float jumpForce = 10f;
     public int jumpStep = 2;
     private bool _isRunning;
+    private bool _isJumping;
+    private bool _isGround;
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -21,33 +23,45 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (_begin)
             _rb.velocity = new Vector3(speed, _rb.velocity.y);
 
-        if (_rb.velocity.x != 0)
-        {
+        AnimatorControllers();
 
-            _isRunning = true;
-            _Animator.SetBool("isRunning", _isRunning);
-        }
+
 
         checkInput();
     }
 
+    private void AnimatorControllers()
+    {
+        _Animator.SetFloat("yVelocity", _rb.velocity.y);
+        if (_rb.velocity.x == 0)
+        {
 
+            _isRunning = false;
+
+        }
+        _Animator.SetBool("isGround", _isGround);
+        _Animator.SetBool("isRunning", _isRunning);
+        _Animator.SetBool("isJump", _isJumping);
+    }
 
     private void checkInput()
     {
         if (Input.GetMouseButtonDown(0))
         {
             _begin = true;
+            _isGround = true;
+            _isRunning = true;
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (jumpStep == 0) return;
 
-            bool isRunning = _Animator.GetBool("isRunning");
+            _isGround = false;
 
             _rb.velocity = new Vector3(speed, jumpForce);
             --jumpStep;
@@ -58,6 +72,7 @@ public class Player : MonoBehaviour
         if (colider.gameObject.tag == "Platform")
         {
             jumpStep = 2;
+            _isGround = true;
         }
     }
 }
