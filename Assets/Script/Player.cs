@@ -14,6 +14,9 @@ public class Player : MonoBehaviour
     private bool _isRunning;
     private bool _isJumping;
     private bool _isGround;
+
+    public float distanceToGround;
+    [SerializeField] private LayerMask WhatIsGround;
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -27,11 +30,19 @@ public class Player : MonoBehaviour
         if (_begin)
             _rb.velocity = new Vector3(speed, _rb.velocity.y);
 
+        checkGround();
         AnimatorControllers();
 
 
 
         checkInput();
+    }
+
+    private void checkGround()
+    {
+        _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
+        if (_isGround)
+            jumpStep = 2;
     }
 
     private void AnimatorControllers()
@@ -68,12 +79,9 @@ public class Player : MonoBehaviour
             --jumpStep;
         }
     }
-    private void OnCollisionEnter2D(Collision2D colider)
+
+    private void OnDrawGizmos()
     {
-        if (colider.gameObject.tag == "Platform")
-        {
-            jumpStep = 2;
-            _isGround = true;
-        }
+        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - distanceToGround));
     }
 }
