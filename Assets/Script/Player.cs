@@ -36,13 +36,13 @@ public class Player : MonoBehaviour
 
     private void AnimatorControllers()
     {
-        _Animator.SetFloat("yVelocity", _rb.velocity.y);
         if (_rb.velocity.x == 0)
         {
 
             _isRunning = false;
 
         }
+        _Animator.SetFloat("yVelocity", _rb.velocity.y);
         _Animator.SetBool("isGround", _isGround);
         _Animator.SetBool("isRunning", _isRunning);
         _Animator.SetBool("isJump", _isJumping);
@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
             _isRunning = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetButtonDown("Jump"))
         {
             if (jumpStep == 0) return;
 
