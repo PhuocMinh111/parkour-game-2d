@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
             _isRunning = false;
 
         }
+        _Animator.SetFloat("xVelocity", _rb.velocity.x);
         _Animator.SetFloat("yVelocity", _rb.velocity.y);
         _Animator.SetBool("isGround", _isGround);
         _Animator.SetBool("isRunning", _isRunning);
