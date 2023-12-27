@@ -10,7 +10,9 @@ public class Platform_generator : MonoBehaviour
     // Start is called before the first frame update
     public Transform[] levelPart;
     private Vector3 spawnPosition;
+    private float deltaPosition;
     public Transform Player;
+    private bool newSpawn;
     // Update is called once per frame
     void Start()
     {
@@ -21,7 +23,8 @@ public class Platform_generator : MonoBehaviour
     void Update()
     {
 
-        float deltaPosition = Math.Abs(Player.position.x - spawnPosition.x);
+        deltaPosition = spawnPosition.x - Player.position.x;
+        // Debug.Log(deltaPosition);
         if (deltaPosition < 2)
         {
             InstantiatePlatform();
@@ -30,8 +33,15 @@ public class Platform_generator : MonoBehaviour
 
     private void InstantiatePlatform()
     {
-        Transform Part = levelPart[UnityEngine.Random.Range(0, levelPart.Length - 1)];
-        spawnPosition = Part.GetChild(1).position;
-        Instantiate(Part, spawnPosition, transform.rotation, transform);
+
+        for (var i = 0; i < 2; i++)
+        {
+
+            Transform Part = levelPart[UnityEngine.Random.Range(0, levelPart.Length - 1)];
+            Debug.Log(spawnPosition.x);
+            Transform newPart = Instantiate(Part, spawnPosition, transform.rotation, transform);
+            spawnPosition = newPart.Find("endPoint").position;
+        }
+
     }
 }
