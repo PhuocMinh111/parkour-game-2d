@@ -42,8 +42,7 @@ public class Platform_generator : MonoBehaviour
             for (var i = 0; i < numberCreatedFlatform; i++)
             {
                 int RandomIndex = UnityEngine.Random.Range(0, levelPart.Length);
-                Debug.Log("length" + levelPart.Length);
-                Debug.Log(RandomIndex);
+
                 Transform Part = levelPart[RandomIndex];
                 float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
                 float width = Math.Abs(Part.Find("endPoint").position.x - Part.Find("startPoint").position.x);
@@ -57,7 +56,7 @@ public class Platform_generator : MonoBehaviour
     private void deletePlatform()
     {
 
-        if (transform.childCount > 5)
+        if (transform.childCount > 7)
         {
             for (int i = 0; i < 2; i++)
             {
