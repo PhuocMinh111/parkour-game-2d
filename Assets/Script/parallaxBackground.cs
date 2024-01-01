@@ -24,11 +24,11 @@ public class parallaxBackground : MonoBehaviour
     {
         float distanceMoved = _Camera.transform.position.x * (1 - parallaxSpeed);
         float distance = _Camera.transform.position.x * parallaxSpeed;
-        transform.position = new Vector2(xPosition + distance, transform.position.y);
+        transform.position = new Vector2(xPosition + distance, _Camera.transform.position.y - 0.5f);
         Debug.Log(_size);
         if (distanceMoved > xPosition + _size)
         {
-            xPosition += _size;
+            xPosition += _size * 1.8f;
         }
     }
 }

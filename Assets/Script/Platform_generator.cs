@@ -14,7 +14,7 @@ public class Platform_generator : MonoBehaviour
 
     public Transform Player;
     [SerializeField] private int numberCreatedFlatform = 3;
-    [SerializeField] private float FlatformHeightStep = 0.5f;
+    [SerializeField] private float FlatformHeightStep = 0.2f;
     private bool newSpawn;
     // Update is called once per frame
     void Start()
@@ -45,8 +45,10 @@ public class Platform_generator : MonoBehaviour
 
                 Transform Part = levelPart[RandomIndex];
                 float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
+                float height = Part.gameObject.GetComponent<SpriteRenderer>().bounds.size.y;
                 float width = Math.Abs(Part.Find("endPoint").position.x - Part.Find("startPoint").position.x);
-                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + 0.5f, randomY);
+
+                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + 0.5f, randomY - height / 2);
                 Transform newPart = Instantiate(Part, newPosition, transform.rotation, transform);
                 spawnPosition = newPart.Find("endPoint").position;
             }
