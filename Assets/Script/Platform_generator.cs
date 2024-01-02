@@ -11,10 +11,10 @@ public class Platform_generator : MonoBehaviour
     // Start is called before the first frame update
     public Transform[] levelPart;
     private Vector3 spawnPosition;
-
     public Transform Player;
     [SerializeField] private int numberCreatedFlatform = 3;
     [SerializeField] private float FlatformHeightStep = 0.2f;
+    [SerializeField] private float distanceBetween = 0.5f;
     private bool newSpawn;
     // Update is called once per frame
     void Start()
@@ -45,10 +45,10 @@ public class Platform_generator : MonoBehaviour
 
                 Transform Part = levelPart[RandomIndex];
                 float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
-                float height = Part.gameObject.GetComponent<SpriteRenderer>().bounds.size.y;
+                float height = Part.GetComponent<SpriteRenderer>().bounds.size.y;
                 float width = Math.Abs(Part.Find("endPoint").position.x - Part.Find("startPoint").position.x);
 
-                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + 0.5f, randomY - height / 2);
+                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + distanceBetween, randomY - height / 2);
                 Transform newPart = Instantiate(Part, newPosition, transform.rotation, transform);
                 spawnPosition = newPart.Find("endPoint").position;
             }

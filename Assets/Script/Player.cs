@@ -17,20 +17,26 @@ public class Player : MonoBehaviour
 
     public float distanceToGround;
     [SerializeField] private LayerMask WhatIsGround;
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private Vector2 wallCheckSize;
+
+    private bool _isHitWall = false;
+
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _Animator = GetComponent<Animator>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (_begin)
+        Debug.Log(_isHitWall.ToString());
+        if (_begin && !_isHitWall)
             _rb.velocity = new Vector3(speed, _rb.velocity.y);
 
-        checkGround();
+        checkCollision();
         AnimatorControllers();
 
 
@@ -38,9 +44,10 @@ public class Player : MonoBehaviour
         checkInput();
     }
 
-    private void checkGround()
+    private void checkCollision()
     {
         _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
+        _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
         if (_isGround)
             jumpStep = 2;
     }
@@ -60,6 +67,11 @@ public class Player : MonoBehaviour
         _Animator.SetBool("isJump", _isJumping);
     }
 
+
+    private void CheckWallHit()
+    {
+        _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector3.forward, 0, WhatIsGround);
+    }
     private void checkInput()
     {
         if (Input.GetMouseButtonDown(0))
@@ -83,5 +95,6 @@ public class Player : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - distanceToGround));
+        Gizmos.DrawWireCube(wallCheck.position, wallCheckSize);
     }
 }
