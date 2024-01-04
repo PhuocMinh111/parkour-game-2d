@@ -17,11 +17,13 @@ public class Player : MonoBehaviour
     private bool _isJumping;
     private bool _isGround;
 
-    public float distanceToGround;
     [Header("collision info")]
+    public float distanceToGround;
     [SerializeField] private LayerMask WhatIsGround;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private Vector2 wallCheckSize;
+    [SerializeField] private float _distanceToCeil;
+    private bool _isHitCeil;
 
     [Header("slide info")]
     [SerializeField] private float _slideSpeed = 8f;
@@ -47,13 +49,13 @@ public class Player : MonoBehaviour
         // Debug.Log(_isHitWall.ToString());
         _slideTimeCounter -= Time.deltaTime;
         _slideCountDown -= Time.deltaTime;
-        if (_begin && !_isHitWall)
+        if (_begin)
         {
 
             Movement();
         }
 
-        Debug.Log("side time" + _slideTimeCounter);
+        Debug.Log("hit ceil" + _isHitCeil);
 
         checkForSlide();
         checkCollision();
@@ -66,21 +68,19 @@ public class Player : MonoBehaviour
 
     private void checkForSlide()
     {
-        if (_slideTimeCounter < 0)
+        if (_slideTimeCounter < 0 && !_isHitCeil)
         {
 
             _isSliding = false;
         }
     }
-    private void checkCollision()
-    {
-        _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
-        _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
 
-    }
 
     private void Movement()
     {
+        if (_isHitWall)
+            return;
+
         if (!_isSliding)
             _rb.velocity = new Vector3(_speed, _rb.velocity.y);
         else
@@ -104,10 +104,32 @@ public class Player : MonoBehaviour
         _Animator.SetBool("isJump", _isJumping);
     }
 
-
-    private void CheckWallHit()
+    private void SlideButton()
     {
-        _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector3.forward, 0, WhatIsGround);
+        if (_slideCountDown > 0) return;
+        if (_rb.velocity.x > 0)
+        {
+            _isSliding = true;
+            _slideTimeCounter = _slideTimer;
+            _slideCountDown = 1.5f;
+        }
+    }
+
+    private void Jump()
+    {
+        if (_isSliding)
+            return;
+        if (_isGround)
+        {
+            _isGround = false;
+            _canDoubleJump = true;
+            _rb.velocity = new Vector3(_speed, jumpForce);
+        }
+        else if (_canDoubleJump)
+        {
+            _canDoubleJump = false;
+            _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
+        }
     }
     private void checkInput()
     {
@@ -128,36 +150,16 @@ public class Player : MonoBehaviour
             SlideButton();
         }
     }
-
-    private void SlideButton()
+    private void checkCollision()
     {
-        if (_slideCountDown > 0) return;
-        if (_rb.velocity.x > 0)
-        {
-            _isSliding = true;
-            _slideTimeCounter = _slideTimer;
-            _slideCountDown = 1.5f;
-        }
+        _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
+        _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
+        _isHitCeil = Physics2D.Raycast(transform.position, Vector2.up, _distanceToCeil, WhatIsGround);
     }
-
-    private void Jump()
-    {
-        if (_isGround)
-        {
-            _isGround = false;
-            _canDoubleJump = true;
-            _rb.velocity = new Vector3(_speed, jumpForce);
-        }
-        else if (_canDoubleJump)
-        {
-            _canDoubleJump = false;
-            _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
-        }
-    }
-
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - distanceToGround));
         Gizmos.DrawWireCube(wallCheck.position, wallCheckSize);
+        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y + _distanceToCeil));
     }
 }
