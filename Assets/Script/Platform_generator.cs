@@ -39,18 +39,19 @@ public class Platform_generator : MonoBehaviour
         if (deltaPosition < 5 * numberCreatedFlatform)
         {
 
-            for (var i = 0; i < numberCreatedFlatform; i++)
+            for (var i = 0; i < levelPart.Length; i++)
             {
-                int RandomIndex = UnityEngine.Random.Range(0, levelPart.Length);
+                // int RandomIndex = UnityEngine.Random.Range(0, levelPart.Length);
 
-                Transform Part = levelPart[RandomIndex];
-                float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
-                float height = Part.GetComponent<SpriteRenderer>().bounds.size.y;
-                float width = Math.Abs(Part.Find("endPoint").position.x - Part.Find("startPoint").position.x);
+                Transform Part = levelPart[i];
+                // float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
 
-                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + distanceBetween, randomY - height / 2);
+                GameObject endPoint = Part.Find("EndPoint").gameObject;
+                float width = Math.Abs(Part.Find("EndPoint").position.x - Part.Find("StartPoint").position.x);
+
+                Vector2 newPosition = new Vector2(spawnPosition.x + width / 2 + distanceBetween, endPoint.transform.position.y);
                 Transform newPart = Instantiate(Part, newPosition, transform.rotation, transform);
-                spawnPosition = newPart.Find("endPoint").position;
+                spawnPosition = newPart.Find("EndPoint").position;
             }
         }
 

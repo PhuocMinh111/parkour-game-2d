@@ -35,6 +35,7 @@ public class Player : MonoBehaviour
     private bool _canDoubleJump;
     private bool _isHitWall = false;
 
+    [HideInInspector] public bool ledgeDetected;
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -142,6 +143,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
+            Debug.Log("Jump");
             Jump();
 
         }
@@ -155,6 +157,7 @@ public class Player : MonoBehaviour
         _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
         _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
         _isHitCeil = Physics2D.Raycast(transform.position, Vector2.up, _distanceToCeil, WhatIsGround);
+        Debug.Log("ledge Detect " + ledgeDetected);
     }
     private void OnDrawGizmos()
     {
