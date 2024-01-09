@@ -15,6 +15,7 @@ public class Platform_generator : MonoBehaviour
     [SerializeField] private int numberCreatedFlatform = 3;
     [SerializeField] private float FlatformHeightStep = 0.2f;
     [SerializeField] private float distanceBetween = 0.5f;
+    [SerializeField] private float distanceToDelete;
     private bool newSpawn;
     // Update is called once per frame
     void Start()

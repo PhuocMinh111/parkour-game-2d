@@ -32,10 +32,19 @@ public class Player : MonoBehaviour
     private bool _isSliding;
     private float _slideTimeCounter;
 
+    [Header("ledge info")]
+    [SerializeField] private Vector2 offset1;
+    [SerializeField] private Vector2 offset2;
+    [HideInInspector] public bool ledgeDetected;
+    private Vector2 climbBeginPosition;
+    private Vector2 climbOverPosition;
+    private bool canGrabLedge = true;
+    private bool canClimb;
+
+
     private bool _canDoubleJump;
     private bool _isHitWall = false;
 
-    [HideInInspector] public bool ledgeDetected;
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -57,17 +66,40 @@ public class Player : MonoBehaviour
         }
 
         Debug.Log("hit ceil" + _isHitCeil);
-
-        checkForSlide();
-        checkCollision();
+        Debug.Log("can climb " + canClimb);
+        CheckForSlide();
+        CheckCollision();
         AnimatorControllers();
-
+        CheckForClimb();
         // Debug.Log(jumpStep.ToString());
 
-        checkInput();
+        CheckInput();
     }
 
-    private void checkForSlide()
+    private void CheckForClimb()
+    {
+        if (ledgeDetected && canGrabLedge)
+        {
+            canGrabLedge = false;
+            Vector2 detectorPosition = GetComponentInChildren<ledgeDetector>().transform.position;
+            climbBeginPosition = detectorPosition + offset1;
+            climbOverPosition = detectorPosition + offset2;
+            canClimb = true;
+        }
+        if (canClimb)
+        {
+            transform.position = climbBeginPosition;
+        }
+    }
+    private void OnClimbOver()
+    {
+        transform.position = climbOverPosition;
+        canClimb = false;
+        Invoke("setGrablegde", 1f);
+
+    }
+    private void setGrablegde() => canGrabLedge = true;
+    private void CheckForSlide()
     {
         if (_slideTimeCounter < 0 && !_isHitCeil)
         {
@@ -103,6 +135,7 @@ public class Player : MonoBehaviour
         _Animator.SetBool("isGround", _isGround);
         _Animator.SetBool("isRunning", _isRunning);
         _Animator.SetBool("isJump", _isJumping);
+        _Animator.SetBool("canClimb", canClimb);
     }
 
     private void SlideButton()
@@ -132,7 +165,7 @@ public class Player : MonoBehaviour
             _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
         }
     }
-    private void checkInput()
+    private void CheckInput()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -152,7 +185,7 @@ public class Player : MonoBehaviour
             SlideButton();
         }
     }
-    private void checkCollision()
+    private void CheckCollision()
     {
         _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
         _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
