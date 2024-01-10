@@ -8,14 +8,20 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rb;
     private Animator _Animator;
     public bool _begin;
-    [Header("Jump info")]
+    [Header("Speed info")]
     [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _maxsPeed = 30f;
+    [SerializeField] private float _milestone;
+    [SerializeField] private float _mileStoneIncreaser;
+    [SerializeField] private float _speedIncreaser;
+
+    [Header("Jump info")]
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float DoubleJumpForce = 0.6f;
     public int jumpStep = 2;
     private bool _isRunning;
     private bool _isJumping;
-    private bool _isGround;
+    [SerializeField] private bool _isGround;
 
     [Header("collision info")]
     public float distanceToGround;
@@ -32,12 +38,13 @@ public class Player : MonoBehaviour
     private bool _isSliding;
     private float _slideTimeCounter;
 
-    [Header("ledge info")]
+    [Header("ledge climb info")]
     [SerializeField] private Vector2 offset1;
     [SerializeField] private Vector2 offset2;
     [HideInInspector] public bool ledgeDetected;
     private Vector2 climbBeginPosition;
     private Vector2 climbOverPosition;
+    private bool isClimbing;
     private bool canGrabLedge = true;
     private bool canClimb;
 
@@ -49,7 +56,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _Animator = GetComponent<Animator>();
-
+        _milestone = _mileStoneIncreaser;
 
     }
 
@@ -65,17 +72,30 @@ public class Player : MonoBehaviour
             Movement();
         }
 
-        Debug.Log("hit ceil" + _isHitCeil);
+        // Debug.Log("is climbing" + isClimbing);
         Debug.Log("can climb " + canClimb);
         CheckForSlide();
         CheckCollision();
         AnimatorControllers();
         CheckForClimb();
+        SpeedController();
         // Debug.Log(jumpStep.ToString());
 
         CheckInput();
     }
-
+    private void SpeedController()
+    {
+        if (_speed == _maxsPeed) return;
+        if (transform.position.x > _milestone)
+        {
+            _speed *= _speedIncreaser;
+            _milestone += _mileStoneIncreaser * _speedIncreaser;
+        }
+        if (_speed > _maxsPeed)
+        {
+            _speed = _maxsPeed;
+        }
+    }
     private void CheckForClimb()
     {
         if (ledgeDetected && canGrabLedge)
@@ -83,6 +103,7 @@ public class Player : MonoBehaviour
             canGrabLedge = false;
             Vector2 detectorPosition = GetComponentInChildren<ledgeDetector>().transform.position;
             climbBeginPosition = detectorPosition + offset1;
+            // transform.position = climbBeginPosition;
             climbOverPosition = detectorPosition + offset2;
             canClimb = true;
         }
@@ -90,14 +111,18 @@ public class Player : MonoBehaviour
         {
             transform.position = climbBeginPosition;
         }
+
     }
     private void OnClimbOver()
     {
         transform.position = climbOverPosition;
         canClimb = false;
+        isClimbing = false;
+
         Invoke("setGrablegde", 1f);
 
     }
+    private void setCanClimb() => canClimb = false;
     private void setGrablegde() => canGrabLedge = true;
     private void CheckForSlide()
     {
@@ -119,6 +144,37 @@ public class Player : MonoBehaviour
         else
             _rb.velocity = new Vector3(_slideSpeed, _rb.velocity.y);
     }
+
+    private void Jump()
+    {
+        if (!_begin)
+            return;
+        if (_isSliding)
+            return;
+        if (canClimb)
+        {
+            // canGrabLedge = false;
+            // Debug.Log("is climbing");
+            isClimbing = true;
+            Invoke("setAfterClimbPosition", 0.3f);
+            return;
+        }
+        if (_isGround)
+        {
+            _isGround = false;
+            _canDoubleJump = true;
+            _rb.velocity = new Vector3(_speed, jumpForce);
+        }
+
+        else if (_canDoubleJump)
+        {
+            _canDoubleJump = false;
+            _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
+        }
+
+        void setAfterClimbPosition() => transform.position = climbOverPosition;
+    }
+
     private void AnimatorControllers()
     {
         if (_rb.velocity.x == 0)
@@ -136,6 +192,9 @@ public class Player : MonoBehaviour
         _Animator.SetBool("isRunning", _isRunning);
         _Animator.SetBool("isJump", _isJumping);
         _Animator.SetBool("canClimb", canClimb);
+        _Animator.SetBool("canGrab", canGrabLedge);
+        _Animator.SetBool("ledgeDetected", ledgeDetected);
+        _Animator.SetBool("isClimbing", isClimbing);
     }
 
     private void SlideButton()
@@ -149,22 +208,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Jump()
-    {
-        if (_isSliding)
-            return;
-        if (_isGround)
-        {
-            _isGround = false;
-            _canDoubleJump = true;
-            _rb.velocity = new Vector3(_speed, jumpForce);
-        }
-        else if (_canDoubleJump)
-        {
-            _canDoubleJump = false;
-            _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
-        }
-    }
+
     private void CheckInput()
     {
         if (Input.GetMouseButtonDown(0))
@@ -176,7 +220,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump"))
         {
-            Debug.Log("Jump");
+
             Jump();
 
         }
