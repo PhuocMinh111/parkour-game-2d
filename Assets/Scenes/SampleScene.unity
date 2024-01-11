@@ -1016,7 +1016,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _begin: 0
   _speed: 5
-  _maxsPeed: 30
+  _maxsPeed: 18
   _milestone: 0
   _mileStoneIncreaser: 20
   _speedIncreaser: 1.05
@@ -1031,9 +1031,10 @@ MonoBehaviour:
   wallCheck: {fileID: 1380266736}
   wallCheckSize: {x: 0.3, y: 2.2}
   _distanceToCeil: 1.2
-  _slideSpeed: 8
+  _slideSpeedRatio: 1.125
   _slideTimer: 0.8
   _slideCountDown: 0
+  knockBackDir: {x: -12, y: 6}
   offset1: {x: -0.4, y: -1.284}
   offset2: {x: 0.57, y: 1.33}
   ledgeDetected: 0
@@ -2284,7 +2285,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 7.892696, y: 1.5368001}
+  m_AnchoredPosition: {x: 4.270927, y: 1.5368001}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &519420033
@@ -4999,7 +5000,7 @@ Transform:
   m_GameObject: {fileID: 1345109939}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.892696, y: 1.5368001, z: -10}
+  m_LocalPosition: {x: 4.270927, y: 1.5368001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5211,7 +5212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ad4da0f4331f954ba3053b1198b6f9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.24
+  radius: 0.36
   player: {fileID: 311748407}
   whatIsGround:
     serializedVersion: 2

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _milestone;
     [SerializeField] private float _mileStoneIncreaser;
     [SerializeField] private float _speedIncreaser;
+    private const float _speedPrefix = 0.05f;
 
     [Header("Jump info")]
     [SerializeField] private float jumpForce = 10f;
@@ -32,11 +34,14 @@ public class Player : MonoBehaviour
     private bool _isHitCeil;
 
     [Header("slide info")]
-    [SerializeField] private float _slideSpeed = 8f;
+    [SerializeField] private float _slideSpeedRatio = 8f;
     [SerializeField] private float _slideTimer;
     [SerializeField] private float _slideCountDown;
     private bool _isSliding;
     private float _slideTimeCounter;
+    [Header("knock info")]
+    [SerializeField] private Vector2 knockBackDir;
+    private bool isKnocked;
 
     [Header("ledge climb info")]
     [SerializeField] private Vector2 offset1;
@@ -47,7 +52,7 @@ public class Player : MonoBehaviour
     private bool isClimbing;
     private bool canGrabLedge = true;
     private bool canClimb;
-
+    private bool canRoll = false;
 
     private bool _canDoubleJump;
     private bool _isHitWall = false;
@@ -64,42 +69,66 @@ public class Player : MonoBehaviour
     void Update()
     {
         // Debug.Log(_isHitWall.ToString());
+        AnimatorControllers();
         _slideTimeCounter -= Time.deltaTime;
         _slideCountDown -= Time.deltaTime;
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            KnockBack();
+        }
+        Debug.Log(isKnocked);
+        if (isKnocked)
+            return;
+
+
         if (_begin)
         {
 
             Movement();
         }
 
+
+
         // Debug.Log("is climbing" + isClimbing);
-        Debug.Log("can climb " + canClimb);
+
         CheckForSlide();
         CheckCollision();
-        AnimatorControllers();
+
         CheckForClimb();
         SpeedController();
         // Debug.Log(jumpStep.ToString());
 
         CheckInput();
     }
+    private void KnockBack()
+    {
+        isKnocked = true;
+        _rb.velocity = new Vector2(-12, 7);
+    }
+    // private void KnockbackVelocity () => 
+    private void KnockBackEnd() => isKnocked = false;
     private void SpeedController()
     {
         if (_speed == _maxsPeed) return;
         if (transform.position.x > _milestone)
         {
-            _speed *= _speedIncreaser;
-            _milestone += _mileStoneIncreaser * _speedIncreaser;
+            _speedIncreaser += _speedIncreaser * _speedPrefix;
+            _speed += _speedIncreaser;
+            _mileStoneIncreaser *= _speedIncreaser;
+            _milestone += _mileStoneIncreaser;
         }
         if (_speed > _maxsPeed)
         {
             _speed = _maxsPeed;
         }
     }
+    #region climb
     private void CheckForClimb()
     {
         if (ledgeDetected && canGrabLedge)
         {
+            _rb.gravityScale = 0;
             canGrabLedge = false;
             Vector2 detectorPosition = GetComponentInChildren<ledgeDetector>().transform.position;
             climbBeginPosition = detectorPosition + offset1;
@@ -115,15 +144,22 @@ public class Player : MonoBehaviour
     }
     private void OnClimbOver()
     {
+        _rb.gravityScale = 4;
         transform.position = climbOverPosition;
         canClimb = false;
         isClimbing = false;
 
         Invoke("setGrablegde", 1f);
-
     }
+    #endregion
+
+    #region canRoll
+    private void onRollFinnish() => canRoll = false;
+
+    #endregion
+    void setGrablegde() => canGrabLedge = true;
     private void setCanClimb() => canClimb = false;
-    private void setGrablegde() => canGrabLedge = true;
+
     private void CheckForSlide()
     {
         if (_slideTimeCounter < 0 && !_isHitCeil)
@@ -142,7 +178,7 @@ public class Player : MonoBehaviour
         if (!_isSliding)
             _rb.velocity = new Vector3(_speed, _rb.velocity.y);
         else
-            _rb.velocity = new Vector3(_slideSpeed, _rb.velocity.y);
+            _rb.velocity = new Vector3(_speed * _slideSpeedRatio, _rb.velocity.y);
     }
 
     private void Jump()
@@ -156,7 +192,7 @@ public class Player : MonoBehaviour
             // canGrabLedge = false;
             // Debug.Log("is climbing");
             isClimbing = true;
-            Invoke("setAfterClimbPosition", 0.3f);
+            // Invoke("setAfterClimbPosition", 0.3f);
             return;
         }
         if (_isGround)
@@ -172,8 +208,8 @@ public class Player : MonoBehaviour
             _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
         }
 
-        void setAfterClimbPosition() => transform.position = climbOverPosition;
     }
+    void setAfterClimbPosition() => transform.position = climbOverPosition;
 
     private void AnimatorControllers()
     {
@@ -185,7 +221,8 @@ public class Player : MonoBehaviour
         }
 
         _Animator.SetBool("canDoubleJump", _canDoubleJump);
-        _Animator.SetFloat("xVelocity", _rb.velocity.x);
+        if (!isKnocked)
+            _Animator.SetFloat("xVelocity", _rb.velocity.x);
         _Animator.SetBool("isSliding", _isSliding);
         _Animator.SetFloat("yVelocity", _rb.velocity.y);
         _Animator.SetBool("isGround", _isGround);
@@ -194,7 +231,11 @@ public class Player : MonoBehaviour
         _Animator.SetBool("canClimb", canClimb);
         _Animator.SetBool("canGrab", canGrabLedge);
         _Animator.SetBool("ledgeDetected", ledgeDetected);
+        _Animator.SetBool("isKnocked", isKnocked);
         _Animator.SetBool("isClimbing", isClimbing);
+        _Animator.SetBool("canRoll", canRoll);
+        if (_rb.velocity.y < -14)
+            canRoll = true;
     }
 
     private void SlideButton()
