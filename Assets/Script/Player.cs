@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private Animator _Animator;
     private SpriteRenderer _sr;
     public bool isDead = false;
+    [SerializeField] int health = 3;
     public bool _begin;
     [Header("Speed info")]
     [SerializeField] private float _speed = 5f;
@@ -108,6 +109,19 @@ public class Player : MonoBehaviour
         // Debug.Log(jumpStep.ToString());
 
         CheckInput();
+    }
+
+    public void Damge()
+    {
+        if (health > 0 && canBeKnock)
+        {
+            health--;
+            KnockBack();
+        }
+        else
+        {
+            StartCoroutine(Die());
+        }
     }
     private IEnumerator Die()
     {

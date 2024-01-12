@@ -21,7 +21,7 @@ public class Coin_manager : MonoBehaviour
             {
                 int coin_number = Random.Range(minCoin, 5);
                 Vector2 spawnPosition = new Vector2(transform.position.x + (i - coin_number / 2) * coin_spacing, transform.position.y);
-                Instantiate(coin, spawnPosition, Quaternion.identity);
+                Instantiate(coin, spawnPosition, Quaternion.identity, transform);
             }
         }
     }
