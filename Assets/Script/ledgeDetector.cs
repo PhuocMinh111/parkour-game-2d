@@ -25,7 +25,7 @@ public class ledgeDetector : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             canDetected = false;
-            isExit = false;
+
         }
     }
 
@@ -40,7 +40,7 @@ public class ledgeDetector : MonoBehaviour
                 return;
             }
         }
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground") && isExit)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             canDetected = true;
 
