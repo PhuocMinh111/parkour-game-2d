@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     private Rigidbody2D _rb;
     private Animator _Animator;
+    private SpriteRenderer _sr;
+    public bool isDead = false;
     public bool _begin;
     [Header("Speed info")]
     [SerializeField] private float _speed = 5f;
@@ -41,6 +43,7 @@ public class Player : MonoBehaviour
     private float _slideTimeCounter;
     [Header("knock info")]
     [SerializeField] private Vector2 knockBackDir;
+    private bool canBeKnock = true;
     private bool isKnocked;
 
     [Header("ledge climb info")]
@@ -61,6 +64,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _Animator = GetComponent<Animator>();
+        _sr = GetComponent<SpriteRenderer>();
         _milestone = _mileStoneIncreaser;
 
     }
@@ -73,14 +77,18 @@ public class Player : MonoBehaviour
         _slideTimeCounter -= Time.deltaTime;
         _slideCountDown -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !isDead)
         {
             KnockBack();
         }
+        if (Input.GetKeyDown(KeyCode.O) && !isDead)
+            StartCoroutine(Die());
         Debug.Log(isKnocked);
         if (isKnocked)
             return;
 
+        if (isDead)
+            return;
 
         if (_begin)
         {
@@ -92,7 +100,7 @@ public class Player : MonoBehaviour
 
         // Debug.Log("is climbing" + isClimbing);
 
-        CheckForSlide();
+        CheckForSlideCancel();
         CheckCollision();
 
         CheckForClimb();
@@ -101,12 +109,39 @@ public class Player : MonoBehaviour
 
         CheckInput();
     }
+    private IEnumerator Die()
+    {
+        isDead = true;
+        _Animator.SetBool("isDead", isDead);
+        _rb.velocity = new Vector2(-12, 7);
+        yield return new WaitForSeconds(0.5f);
+        _rb.velocity = Vector2.zero;
+    }
     private void KnockBack()
     {
+        if (!canBeKnock) return;
+        StartCoroutine(Invincibility());
+
         isKnocked = true;
         _rb.velocity = new Vector2(-12, 7);
     }
     // private void KnockbackVelocity () => 
+
+    private IEnumerator Invincibility()
+    {
+        Color originColor = _sr.color;
+        Color darkenColor = new Color(_sr.color.r, _sr.color.g, _sr.color.b, 0.5f);
+        canBeKnock = false;
+        for (int i = 1; i < 10; i++)
+        {
+            yield return new WaitForSeconds(.1f + i / 15f);
+            _sr.color = darkenColor;
+            yield return new WaitForSeconds(.1f + i / 15f);
+            _sr.color = originColor;
+        }
+
+        canBeKnock = true;
+    }
     private void KnockBackEnd() => isKnocked = false;
     private void SpeedController()
     {
@@ -151,16 +186,20 @@ public class Player : MonoBehaviour
 
         Invoke("setGrablegde", 1f);
     }
+    void setGrablegde() => canGrabLedge = true;
+    private void setCanClimb() => canClimb = false;
+
+    void setAfterClimbPosition() => transform.position = climbOverPosition;
+
     #endregion
 
     #region canRoll
     private void onRollFinnish() => canRoll = false;
 
     #endregion
-    void setGrablegde() => canGrabLedge = true;
-    private void setCanClimb() => canClimb = false;
 
-    private void CheckForSlide()
+
+    private void CheckForSlideCancel()
     {
         if (_slideTimeCounter < 0 && !_isHitCeil)
         {
@@ -181,6 +220,7 @@ public class Player : MonoBehaviour
             _rb.velocity = new Vector3(_speed * _slideSpeedRatio, _rb.velocity.y);
     }
 
+    #region input
     private void Jump()
     {
         if (!_begin)
@@ -209,7 +249,18 @@ public class Player : MonoBehaviour
         }
 
     }
-    void setAfterClimbPosition() => transform.position = climbOverPosition;
+    private void SlideButton()
+    {
+        if (_slideCountDown > 0) return;
+        if (_rb.velocity.x > 0)
+        {
+            _isSliding = true;
+            _slideTimeCounter = _slideTimer;
+            _slideCountDown = 1.5f;
+        }
+    }
+    #endregion
+
 
     private void AnimatorControllers()
     {
@@ -238,16 +289,6 @@ public class Player : MonoBehaviour
             canRoll = true;
     }
 
-    private void SlideButton()
-    {
-        if (_slideCountDown > 0) return;
-        if (_rb.velocity.x > 0)
-        {
-            _isSliding = true;
-            _slideTimeCounter = _slideTimer;
-            _slideCountDown = 1.5f;
-        }
-    }
 
 
     private void CheckInput()

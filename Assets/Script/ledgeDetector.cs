@@ -9,7 +9,8 @@ public class ledgeDetector : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private bool canDetected;
-
+    private bool isExit;
+    private BoxCollider2D boxCd => GetComponent<BoxCollider2D>();
     // Update is called once per frame
 
     void Update()
@@ -24,15 +25,28 @@ public class ledgeDetector : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             canDetected = false;
+            isExit = false;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(boxCd.bounds.center, boxCd.bounds.size, 0);
+
+        foreach (var hit in colliders)
+        {
+            if (hit.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                return;
+            }
+        }
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground") && isExit)
         {
             canDetected = true;
+
         }
+
+
     }
     private void OnDrawGizmos()
     {
