@@ -84,7 +84,8 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.O) && !isDead)
             StartCoroutine(Die());
-        Debug.Log(isKnocked);
+        Debug.Log("is Sliding" + _isSliding);
+        Debug.Log("is hit ceil " + _isHitCeil);
         if (isKnocked)
             return;
 
@@ -130,6 +131,8 @@ public class Player : MonoBehaviour
         _rb.velocity = new Vector2(-12, 7);
         yield return new WaitForSeconds(0.5f);
         _rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(0.5f);
+        GameManager.instance.RestartLevel();
     }
     private void KnockBack()
     {
@@ -231,7 +234,7 @@ public class Player : MonoBehaviour
         if (!_isSliding)
             _rb.velocity = new Vector3(_speed, _rb.velocity.y);
         else
-            _rb.velocity = new Vector3(_speed * _slideSpeedRatio, _rb.velocity.y);
+            _rb.velocity = new Vector3(_speed * 1.25f, _rb.velocity.y);
     }
 
     #region input
@@ -265,13 +268,14 @@ public class Player : MonoBehaviour
     }
     private void SlideButton()
     {
+        if (_isSliding) return;
         if (_slideCountDown > 0) return;
-        if (_rb.velocity.x > 0)
-        {
-            _isSliding = true;
-            _slideTimeCounter = _slideTimer;
-            _slideCountDown = 1.5f;
-        }
+
+
+        _isSliding = true;
+        _slideTimeCounter = _slideTimer;
+        _slideCountDown = 1.5f;
+
     }
     #endregion
 

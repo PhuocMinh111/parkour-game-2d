@@ -5,7 +5,15 @@ using UnityEngine;
 public class Trap : MonoBehaviour
 {
     // Start is called before the first frame update
-    private void OnTriggerEnter2D(Collider2D collider)
+    [SerializeField] protected float changeToSpawn = 60;
+
+
+    protected virtual void Start()
+    {
+        if (changeToSpawn > Random.Range(0, 100))
+            Destroy(gameObject);
+    }
+    protected virtual void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.GetComponent<Player>() != null)
         {
