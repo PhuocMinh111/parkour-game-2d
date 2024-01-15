@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _slideSpeedRatio = 8f;
     [SerializeField] private float _slideTimer;
     [SerializeField] private float _slideCountDown;
-    private bool _isSliding;
+    public bool _isSliding;
     private float _slideTimeCounter;
     [Header("knock info")]
     [SerializeField] private Vector2 knockBackDir;
@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O) && !isDead)
             StartCoroutine(Die());
         Debug.Log("is Sliding" + _isSliding);
-        Debug.Log("is hit ceil " + _isHitCeil);
+
         if (isKnocked)
             return;
 
@@ -178,6 +178,7 @@ public class Player : MonoBehaviour
     #region climb
     private void CheckForClimb()
     {
+        if (_isHitWall && _isGround) return;
         if (ledgeDetected && canGrabLedge)
         {
             _rb.gravityScale = 0;
@@ -188,6 +189,7 @@ public class Player : MonoBehaviour
             climbOverPosition = detectorPosition + offset2;
             canClimb = true;
         }
+
         if (canClimb)
         {
             transform.position = climbBeginPosition;
@@ -228,13 +230,10 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
-        if (_isHitWall)
+        if (_isHitWall && !_isSliding)
             return;
 
-        if (!_isSliding)
-            _rb.velocity = new Vector3(_speed, _rb.velocity.y);
-        else
-            _rb.velocity = new Vector3(_speed * 1.25f, _rb.velocity.y);
+        _rb.velocity = new Vector3(_speed, _rb.velocity.y);
     }
 
     #region input
@@ -298,7 +297,7 @@ public class Player : MonoBehaviour
         _Animator.SetBool("isRunning", _isRunning);
         _Animator.SetBool("isJump", _isJumping);
         _Animator.SetBool("canClimb", canClimb);
-        _Animator.SetBool("canGrab", canGrabLedge);
+        // _Animator.SetBool("canGrab", canGrabLedge);
         _Animator.SetBool("ledgeDetected", ledgeDetected);
         _Animator.SetBool("isKnocked", isKnocked);
         _Animator.SetBool("isClimbing", isClimbing);
@@ -334,7 +333,7 @@ public class Player : MonoBehaviour
         _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
         _isHitWall = Physics2D.BoxCast(wallCheck.position, wallCheckSize, 0, Vector2.zero, 0, WhatIsGround);
         _isHitCeil = Physics2D.Raycast(transform.position, Vector2.up, _distanceToCeil, WhatIsGround);
-        Debug.Log("ledge Detect " + ledgeDetected);
+
     }
     private void OnDrawGizmos()
     {
