@@ -1255,7 +1255,7 @@ Rigidbody2D:
   m_LinearDrag: 1
   m_AngularDrag: 0.05
   m_GravityScale: 4
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 75ca806e93241b44bb86d4521fd84ff3, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1300,6 +1300,7 @@ MonoBehaviour:
   _slideSpeedRatio: 1.125
   _slideTimer: 0.8
   _slideCountDown: 0
+  _isSliding: 0
   knockBackDir: {x: -12, y: 6}
   offset1: {x: -0.4, y: -1.284}
   offset2: {x: 0.57, y: 1.33}
@@ -5537,6 +5538,8 @@ MonoBehaviour:
   - {fileID: 6950241532383757348, guid: 445831b11086d794cba9cfdd88ade4fc, type: 3}
   - {fileID: 487220922449288603, guid: da84250e024f994478cdfb1c7ae53fd3, type: 3}
   - {fileID: 487220922449288603, guid: c4c2e57897dd30947a63e57037d43f89, type: 3}
+  - {fileID: 6950241532383757348, guid: cbde36e7b7e813f47be178b5ac0b2b06, type: 3}
+  - {fileID: 487220922449288603, guid: d943d26beba5256408320da3cf72ba5f, type: 3}
   Player: {fileID: 311748404}
   numberCreatedFlatform: 3
   FlatformHeightStep: 0.5

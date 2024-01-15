@@ -16,7 +16,7 @@ public class ledgeDetector : MonoBehaviour
     void Update()
     {
         // Debug.Log("can detected " + canDetected);
-        if (canDetected)
+        if (canDetected && !player._isSliding)
             player.ledgeDetected = Physics2D.OverlapCircle(transform.position, radius, whatIsGround);
     }
 
