@@ -21,8 +21,7 @@ public class Platform_generator : MonoBehaviour
     void Start()
     {
 
-        Transform beginLevel = Instantiate(levelPart[0], new Vector3(Player.position.x, Player.position.y - 3), transform.rotation, transform);
-        spawnPosition = beginLevel.GetChild(1).position;
+
     }
     void Update()
     {
@@ -40,11 +39,11 @@ public class Platform_generator : MonoBehaviour
         if (deltaPosition < 5 * numberCreatedFlatform)
         {
 
-            for (var i = 0; i < levelPart.Length; i++)
+            for (var i = 0; i < numberCreatedFlatform; i++)
             {
-                // int RandomIndex = UnityEngine.Random.Range(0, levelPart.Length);
+                int RandomIndex = UnityEngine.Random.Range(0, levelPart.Length);
 
-                Transform Part = levelPart[i];
+                Transform Part = levelPart[RandomIndex];
                 // float randomY = UnityEngine.Random.Range(-4, 2) * FlatformHeightStep;
 
                 GameObject endPoint = Part.Find("EndPoint").gameObject;
