@@ -335,6 +335,22 @@ public class Player : MonoBehaviour
         _isHitCeil = Physics2D.Raycast(transform.position, Vector2.up, _distanceToCeil, WhatIsGround);
 
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            if (collision.transform.rotation.z != 0)
+            {
+                _isSliding = true;
+                transform.Rotate(new Vector3(0, 0, collision.transform.rotation.z));
+            }
+            else
+            {
+                _isSliding = false;
+                transform.Rotate(new Vector3(0, 0, 0));
+            }
+        }
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - distanceToGround));

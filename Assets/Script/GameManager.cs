@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
     public static GameManager instance;
+    [SerializeField] private Player player;
     public int coin;
 
 
@@ -15,6 +16,9 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
-
+    public void StartGame()
+    {
+        player._begin = true;
+    }
     public void RestartLevel() => SceneManager.LoadScene(0);
 }

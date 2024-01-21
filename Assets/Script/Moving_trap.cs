@@ -14,7 +14,7 @@ public class Moving_trap : Trap
     private int i;
     protected override void Start()
     {
-        base.Start();
+
         transform.position = movePoints[0].position;
     }
     private void Update()
