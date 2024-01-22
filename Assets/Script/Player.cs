@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     private Animator _Animator;
     private SpriteRenderer _sr;
     public bool isDead = false;
-    [SerializeField] int health = 3;
+    [SerializeField] public int health = 3;
     public bool _begin;
     [Header("Speed info")]
     [SerializeField] private float _speed = 5f;
@@ -310,12 +310,7 @@ public class Player : MonoBehaviour
 
     private void CheckInput()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            _begin = true;
-            _isGround = true;
-            _isRunning = true;
-        }
+
 
         if (Input.GetButtonDown("Jump"))
         {
@@ -328,6 +323,8 @@ public class Player : MonoBehaviour
             SlideButton();
         }
     }
+
+
     private void CheckCollision()
     {
         _isGround = Physics2D.Raycast(transform.position, Vector2.down, distanceToGround, WhatIsGround);
@@ -335,22 +332,7 @@ public class Player : MonoBehaviour
         _isHitCeil = Physics2D.Raycast(transform.position, Vector2.up, _distanceToCeil, WhatIsGround);
 
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Ground")
-        {
-            if (collision.transform.rotation.z != 0)
-            {
-                _isSliding = true;
-                transform.Rotate(new Vector3(0, 0, collision.transform.rotation.z));
-            }
-            else
-            {
-                _isSliding = false;
-                transform.Rotate(new Vector3(0, 0, 0));
-            }
-        }
-    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - distanceToGround));
