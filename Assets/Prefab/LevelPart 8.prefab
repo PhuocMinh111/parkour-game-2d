@@ -548,17 +548,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 487220922449288603}
     m_Modifications:
+    - target: {fileID: 2395359641977891901, guid: ef46da87172a65d4181866489a9fd414, type: 3}
+      propertyPath: changeToSpawn
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 2913016389216884421, guid: ef46da87172a65d4181866489a9fd414, type: 3}
       propertyPath: m_Name
       value: Trap (1)
       objectReference: {fileID: 0}
     - target: {fileID: 5721931990606793109, guid: ef46da87172a65d4181866489a9fd414, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.81
+      value: -10.29
       objectReference: {fileID: 0}
     - target: {fileID: 5721931990606793109, guid: ef46da87172a65d4181866489a9fd414, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.53
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: 5721931990606793109, guid: ef46da87172a65d4181866489a9fd414, type: 3}
       propertyPath: m_LocalPosition.z

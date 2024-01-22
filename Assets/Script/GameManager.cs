@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Player player;
     [SerializeField] private Transform CameraLimiter;
+    [SerializeField] private InGame_UI InGame_UI;
     public int coin;
     public float distance = 5;
     [HideInInspector] public int playerHealth;
@@ -26,11 +27,11 @@ public class GameManager : MonoBehaviour
 
         CameraLimiter.transform.position = new Vector2(player.gameObject.transform.position.x, CameraLimiter.transform.position.y);
 
-        playerHealth = player.health;
+
         if (distance < player.transform.position.x)
             distance = player.transform.position.x;
     }
-
+    public void UpdateHealth(int health) => InGame_UI.UpdateHealth(health);
     public void PlayerUnlock() => player._begin = true;
     public void RestartLevel() => SceneManager.LoadScene(0);
 }

@@ -7,6 +7,7 @@ public class InGame_UI : MonoBehaviour
 {
     // Start is called before the first frame update
     // Start is called before the first frame update
+    [SerializeField] private bool pauseGame;
     [SerializeField] TextMeshProUGUI coin;
     [SerializeField] TextMeshProUGUI distance;
 
@@ -28,20 +29,37 @@ public class InGame_UI : MonoBehaviour
     {
         Debug.Log(GameManager.instance.playerHealth);
         UpdateInfo();
-        //     if (GameManager.instance.playerHealth < health)
-        //     {
-        //         for (int i = 0; i < healthBar.childCount; i++)
-        //         {
-        //             if (i > GameManager.instance.playerHealth)
-        //             {
-        //                 healthBar.GetChild(i).gameObject.SetActive(false);
-        //             }
-        //             else
-        //             {
-        //                 healthBar.GetChild(i).gameObject.SetActive(true);
-        //             }
-        //         }
-        //     }
+
+
+
+    }
+    public void UpdateHealth(int health)
+    {
+        Debug.Log(health);
+        for (int i = 0; i < healthBar.childCount; i++)
+        {
+            if (i > health - 1)
+            {
+                healthBar.GetChild(i).gameObject.SetActive(false);
+            }
+            else
+            {
+                healthBar.GetChild(i).gameObject.SetActive(true);
+            }
+        }
     }
 
+    public void PauseGame()
+    {
+        if (pauseGame)
+        {
+            Time.timeScale = 1;
+            pauseGame = false;
+        }
+        else
+        {
+            Time.timeScale = 0;
+            pauseGame = true;
+        }
+    }
 }

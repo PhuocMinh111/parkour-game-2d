@@ -113,10 +113,13 @@ public class Player : MonoBehaviour
     }
 
     public void Damge()
+
     {
-        if (health > 0 && canBeKnock)
+        if (!canBeKnock) return;
+        if (health > 0)
         {
             health--;
+            GameManager.instance.UpdateHealth(health);
             KnockBack();
         }
         else
