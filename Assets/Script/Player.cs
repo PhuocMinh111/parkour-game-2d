@@ -135,7 +135,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         _rb.velocity = Vector2.zero;
         yield return new WaitForSeconds(0.5f);
-        GameManager.instance.RestartLevel();
+        GameManager.instance.Endgame();
     }
     private void KnockBack()
     {

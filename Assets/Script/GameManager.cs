@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public const string PLAYER_COLOR_PREF = "playerColor";
     public const string PLATFORM_COLOR_PREF = "playerColor";
     [SerializeField] private Player player;
+    [SerializeField] private Main_UI ui;
     [SerializeField] Platform_generator Platform_Generator;
     [SerializeField] private Transform CameraLimiter;
     [SerializeField] private InGame_UI InGame_UI;
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI score_text;
     [SerializeField] private TextMeshProUGUI highest_score_text;
     public int coin;
+    public float score;
     public float distance = 5;
     private float highestScrore;
 
@@ -40,7 +42,7 @@ public class GameManager : MonoBehaviour
 
 
         CameraLimiter.transform.position = new Vector2(player.gameObject.transform.position.x, CameraLimiter.transform.position.y);
-
+        score = distance * 9.8f;
 
         if (distance < player.transform.position.x)
             distance = player.transform.position.x;
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour
     public void RestartLevel()
     {
         Save();
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
     public void ChangeFlatformColor(Color color)
@@ -74,6 +77,14 @@ public class GameManager : MonoBehaviour
         }
         SavePlatformColor(color);
     }
+
+
+    public void Endgame()
+    {
+        Time.timeScale = 0;
+        ui.SwitchToEndgame();
+    }
+
 
     public void ChangePlayerColor(Color color)
     {
