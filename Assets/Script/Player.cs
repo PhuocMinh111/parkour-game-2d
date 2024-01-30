@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
         _Animator = GetComponent<Animator>();
         _sr = GetComponent<SpriteRenderer>();
         _milestone = _mileStoneIncreaser;
-
+        _sr.color = GameManager.instance.LoadColor(GameManager.PLAYER_COLOR_PREF);
     }
 
     // Update is called once per frame

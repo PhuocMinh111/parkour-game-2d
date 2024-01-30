@@ -14,12 +14,14 @@ public class Moving_trap : Trap
     private int i;
     protected override void Start()
     {
-
-        transform.position = movePoints[0].position;
+        if (movePoints.Length > 0)
+        {
+            transform.position = movePoints[0].position;
+        }
     }
     private void Update()
     {
-
+        if (movePoints.Length <= 0) return;
         transform.position = Vector3.MoveTowards(transform.position, movePoints[i].position, speed * Time.deltaTime);
         if (Vector3.Distance(transform.position, movePoints[i].position) < 0.25f)
         {
