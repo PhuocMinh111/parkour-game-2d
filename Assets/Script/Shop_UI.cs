@@ -29,21 +29,23 @@ public class Shop_UI : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private TextMeshProUGUI coinText;
     [SerializeField] private TextMeshProUGUI notifyTxt;
-    [Header("Player color")]
+    [Header("Platform color")]
     [SerializeField] private ColorToSell[] PlatformColorList;
     [SerializeField] private GameObject PlatformColorButton;
     [SerializeField] private Transform PlatformParent;
     [SerializeField] private Image PlatformImage;
 
-    [Header("Platform color")]
+    [Header("Player color")]
     [SerializeField] private PlayerColor[] PlayerColorList;
     [SerializeField] private GameObject PlayerColorButton;
     [SerializeField] private Transform PlayerParent;
     [SerializeField] private Image PlayerImage;
 
+
     void Start()
     {
         coinText.text = PlayerPrefs.GetInt("coins", 0).ToString();
+        PlayerImage.color = GameManager.instance.LoadColor(GameManager.PLAYER_COLOR_PREF);
         for (int i = 0; i < PlatformColorList.Length; i++)
         {
             Color color = PlatformColorList[i].color;

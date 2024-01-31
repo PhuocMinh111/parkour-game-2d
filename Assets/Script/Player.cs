@@ -61,6 +61,7 @@ public class Player : MonoBehaviour
     private bool _canDoubleJump;
     private bool _isHitWall = false;
 
+
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -131,6 +132,7 @@ public class Player : MonoBehaviour
     {
         isDead = true;
         _Animator.SetBool("isDead", isDead);
+        AudioManager.instance.PlaySfx(Sound.Die);
         _rb.velocity = new Vector2(-12, 7);
         yield return new WaitForSeconds(0.5f);
         _rb.velocity = Vector2.zero;
@@ -240,6 +242,8 @@ public class Player : MonoBehaviour
     }
 
     #region input
+
+    #region  jump
     private void Jump()
     {
         if (!_begin)
@@ -248,14 +252,12 @@ public class Player : MonoBehaviour
             return;
         if (canClimb)
         {
-            // canGrabLedge = false;
-            // Debug.Log("is climbing");
             isClimbing = true;
-            // Invoke("setAfterClimbPosition", 0.3f);
             return;
         }
         if (_isGround)
         {
+            AudioManager.instance.PlaySfx(Sound.Jump);
             _isGround = false;
             _canDoubleJump = true;
             _rb.velocity = new Vector3(_speed, jumpForce);
@@ -263,11 +265,13 @@ public class Player : MonoBehaviour
 
         else if (_canDoubleJump)
         {
+            AudioManager.instance.PlaySfx(Sound.Jump2);
             _canDoubleJump = false;
             _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
         }
 
     }
+    #endregion
     private void SlideButton()
     {
         if (_isSliding) return;
