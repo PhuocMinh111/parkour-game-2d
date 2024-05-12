@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum Sound
@@ -12,7 +14,7 @@ public enum Sound
     UIClick
 
 }
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviour,IObserver
 {
     // Start is called before the first frame update
 
@@ -21,6 +23,8 @@ public class AudioManager : MonoBehaviour
     {
         instance = this;
     }
+    [SerializeField] Player player;
+    [SerializeField] Coin coin;
     [SerializeField] private AudioSource[] sfx;
     [SerializeField] private AudioSource[] bgm;
 
@@ -39,6 +43,30 @@ public class AudioManager : MonoBehaviour
         PlayBGM(Sound.BGM);
         StopSfx();
     }
+    public void OnEnable ()
+    {  
+        coin.AddObserver(this);
+        player.AddObserver(this);
+    }
+    private void OnDisable ()
+    {
+        player.RemoveObserver(this);
+    }
+
+    public void OnNotify (PlayerActions action)
+    {
+        if (action == PlayerActions.jump)
+        {
+            PlaySfx(Sound.Jump);
+        } else if (action == PlayerActions.doubleJump)
+        {
+            PlaySfx(Sound.Jump2);
+        } else if (action == PlayerActions.coin)
+        {
+            PlaySfx(Sound.Coin);
+        }
+    }
+
     public void PlaySfx(Sound sound)
 
     {
@@ -72,7 +100,7 @@ public class AudioManager : MonoBehaviour
             bgm[i].Stop();
         }
     }
-
+   
     public void UIClick() => PlaySfx(Sound.UIClick);
 
 }

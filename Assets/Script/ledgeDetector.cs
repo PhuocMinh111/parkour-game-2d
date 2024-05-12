@@ -9,6 +9,7 @@ public class ledgeDetector : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private bool canDetected;
+    
     private bool isExit;
     private BoxCollider2D boxCd => GetComponent<BoxCollider2D>();
     // Update is called once per frame
@@ -28,7 +29,7 @@ public class ledgeDetector : MonoBehaviour
 
         }
     }
-
+    
     private void OnTriggerExit2D(Collider2D collision)
     {
         Collider2D[] colliders = Physics2D.OverlapBoxAll(boxCd.bounds.center, boxCd.bounds.size, 0);

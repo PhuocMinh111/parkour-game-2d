@@ -18,11 +18,7 @@ public class Platform_generator : MonoBehaviour
     [SerializeField] private float distanceToDelete;
     private bool newSpawn;
     // Update is called once per frame
-    void Start()
-    {
-
-
-    }
+    
     void Update()
     {
 

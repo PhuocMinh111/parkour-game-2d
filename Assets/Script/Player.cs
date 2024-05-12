@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Notifier
+
 {
     // Start is called before the first frame update
+    
+   
     private Rigidbody2D _rb;
     private Animator _Animator;
     private SpriteRenderer _sr;
@@ -46,7 +50,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 knockBackDir;
     private bool canBeKnock = true;
     private bool isKnocked;
-
+    public Action collectCoin;
     [Header("ledge climb info")]
     [SerializeField] private Vector2 offset1;
     [SerializeField] private Vector2 offset2;
@@ -61,31 +65,31 @@ public class Player : MonoBehaviour
     private bool _canDoubleJump;
     private bool _isHitWall = false;
 
+    
 
-    void Start()
+    void OnEnable()
     {
+        // GameManager.instance.count = 1;
+        collectCoin = () => {NotifyMessage(PlayerActions.coin);};
+        int count = Math.Abs(2321);
         _rb = GetComponent<Rigidbody2D>();
         _Animator = GetComponent<Animator>();
         _sr = GetComponent<SpriteRenderer>();
         _milestone = _mileStoneIncreaser;
         _sr.color = GameManager.instance.LoadColor(GameManager.PLAYER_COLOR_PREF);
     }
-
+    
     // Update is called once per frame
     void Update()
     {
         // Debug.Log(_isHitWall.ToString());
         AnimatorControllers();
+       
         _slideTimeCounter -= Time.deltaTime;
         _slideCountDown -= Time.deltaTime;
+    
 
-        if (Input.GetKeyDown(KeyCode.K) && !isDead)
-        {
-            KnockBack();
-        }
-        if (Input.GetKeyDown(KeyCode.O) && !isDead)
-            StartCoroutine(Die());
-        Debug.Log("is Sliding" + _isSliding);
+       
 
         if (isKnocked)
             return;
@@ -101,14 +105,14 @@ public class Player : MonoBehaviour
 
 
 
-        // Debug.Log("is climbing" + isClimbing);
+     
 
         CheckForSlideCancel();
         CheckCollision();
 
         CheckForClimb();
         SpeedController();
-        // Debug.Log(jumpStep.ToString());
+     
 
         CheckInput();
     }
@@ -132,7 +136,7 @@ public class Player : MonoBehaviour
     {
         isDead = true;
         _Animator.SetBool("isDead", isDead);
-        AudioManager.instance.PlaySfx(Sound.Die);
+        NotifyMessage(PlayerActions.die);
         _rb.velocity = new Vector2(-12, 7);
         yield return new WaitForSeconds(0.5f);
         _rb.velocity = Vector2.zero;
@@ -257,7 +261,7 @@ public class Player : MonoBehaviour
         }
         if (_isGround)
         {
-            AudioManager.instance.PlaySfx(Sound.Jump);
+            NotifyMessage(PlayerActions.jump);
             _isGround = false;
             _canDoubleJump = true;
             _rb.velocity = new Vector3(_speed, jumpForce);
@@ -265,7 +269,7 @@ public class Player : MonoBehaviour
 
         else if (_canDoubleJump)
         {
-            AudioManager.instance.PlaySfx(Sound.Jump2);
+            NotifyMessage(PlayerActions.doubleJump);
             _canDoubleJump = false;
             _rb.velocity = new Vector3(_speed, jumpForce * DoubleJumpForce);
         }
@@ -275,7 +279,7 @@ public class Player : MonoBehaviour
     private void SlideButton()
     {
         if (_isSliding) return;
-        if (_slideCountDown > 0) return;
+        if (_slideCountDown > 0.1f) return;
 
 
         _isSliding = true;
@@ -288,6 +292,8 @@ public class Player : MonoBehaviour
 
     private void AnimatorControllers()
     {
+
+
         if (_rb.velocity.x == 0)
         {
 
