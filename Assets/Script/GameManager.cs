@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
     public static GameManager instance;
+   
     public const string PLAYER_COLOR_PREF = "playerColor";
     public const string PLATFORM_COLOR_PREF = "playerColor";
     [SerializeField] private Player player;
@@ -19,28 +20,35 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coin_text;
     [SerializeField] private TextMeshProUGUI score_text;
     [SerializeField] private TextMeshProUGUI highest_score_text;
+    [SerializeField] private AudioManager audioManager;
     public int coin;
     public float score;
     public float distance = 5;
     private float highestScrore;
+
+    public static int count;
+
+    public EventHandler MainUIEvent;
+    private PlayerPrefs myPlayerPref;
 
     [HideInInspector] public int playerHealth;
 
     private void Awake()
     {
         instance = this;
+       
         coin_text.text = PlayerPrefs.GetInt("coins", 0).ToString("#,#");
         score_text.text = PlayerPrefs.GetFloat("score", 0).ToString("#,#");
         highestScrore = PlayerPrefs.GetFloat("highestScore", 0);
         highest_score_text.text = highestScrore.ToString();
-
+        myPlayerPref = new PlayerPrefs();
         ChangePlayerColor(LoadColor(PLAYER_COLOR_PREF));
     }
 
     private void Update()
     {
 
-
+        
         CameraLimiter.transform.position = new Vector2(player.gameObject.transform.position.x, CameraLimiter.transform.position.y);
         score = distance * 9.8f;
 
@@ -95,6 +103,7 @@ public class GameManager : MonoBehaviour
     public bool EnoughMoney(int price)
     {
         int coins = PlayerPrefs.GetInt("coins", 0);
+        
         if (coins > price)
         {
 
